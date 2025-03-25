@@ -68,31 +68,31 @@ void send_enable(int Displaynr)
     switch (Displaynr)
     {
         case 3:
-            SetBit(PORTC, disp4);
-            ClearBit(PORTB, disp1);
-            ClearBit(PORTC, disp2);
-            ClearBit(PORTC, disp3);
+            ClearBit(PORTC, disp4);
+            SetBit(PORTB, disp1);
+            SetBit(PORTC, disp2);
+            SetBit(PORTC, disp3);
         break;
 
         case 2:
-            SetBit(PORTC, disp3);
-            ClearBit(PORTB, disp1);
-            ClearBit(PORTC, disp2);
-            ClearBit(PORTC, disp4);
+            ClearBit(PORTC, disp3);
+            SetBit(PORTB, disp1);
+            SetBit(PORTC, disp2);
+            SetBit(PORTC, disp4);
         break;
 
         case 1:
-            SetBit(PORTC, disp2);
-            ClearBit(PORTB, disp1);
-            ClearBit(PORTC, disp4);
-            ClearBit(PORTC, disp3);
+            ClearBit(PORTC, disp2);
+            SetBit(PORTB, disp1);
+            SetBit(PORTC, disp4);
+            SetBit(PORTC, disp3);
         break;
 
         case 0:
-            SetBit(PORTB, disp1);
-            ClearBit(PORTC, disp4);
-            ClearBit(PORTC, disp2);
-            ClearBit(PORTC, disp3);
+            ClearBit(PORTB, disp1);
+            SetBit(PORTC, disp4);
+            SetBit(PORTC, disp2);
+            SetBit(PORTC, disp3);
         break;
 
         default:
@@ -129,5 +129,5 @@ void DECdisplay_getal(uint16_t getal)
 }
 
 void loop() {
-    DECdisplay_getal(12);
+    DECdisplay_getal(1234);
 }
