@@ -127,10 +127,10 @@ void setup() {
     ClearBit(PORTC, disp2);
     ClearBit(PORTC, disp3);
 
-    // display(2,0);
+
 }
 
 void loop() {
-    // display(0,0);
-    DECdisplay_getal(9678);
+
+     DECdisplay_getal(5634);
 }
