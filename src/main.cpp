@@ -16,8 +16,47 @@
 #define disp2       PC1             ///A1
 #define disp3       PC2             ///A2
 
+enum direction {cw,ccw};
 
+volatile uint16_t DisplayValue = 124;
+volatile direction Dir = cw;
+volatile bool dirFlag = false;
 
+ISR(INT0_vect) {
+    if (dirFlag) {
+        DisplayValue++;
+        dirFlag = false;
+
+    }
+    else {
+        dirFlag = true;
+    }
+}
+
+ISR(INT1_vect) {
+    if (dirFlag) {
+        DisplayValue--;
+        dirFlag = false;
+    }
+    else {
+        dirFlag = true;
+    }
+}
+
+void InitInterrupt() {
+    //enable external interrupts 0 and 1
+    SetBit(EIMSK, INT0);
+    SetBit(EIMSK, INT1);
+
+    SetBit(PORTD,PD3);
+    SetBit(PORTD,PD2);
+
+    //Falling edge triggers interrupt on int0 en int1
+    SetBit(EICRA,ISC01);
+    SetBit(EICRA,ISC11);
+
+    sei();
+}
 
 void send_data(unsigned char data)
 {
@@ -109,6 +148,7 @@ void DECdisplay_getal(uint16_t getal)
 }
 void setup() {
 
+    InitInterrupt();
 
     // Init outputs
     SetBit(DDRB, DataIn);
@@ -132,5 +172,5 @@ void setup() {
 
 void loop() {
 
-     DECdisplay_getal(5634);
+     DECdisplay_getal(DisplayValue);
 }
