@@ -7,36 +7,16 @@
 
 #define DataIn      PB4             ///D12
 #define DataReg     PORTB
-#define ShiftCLK    PB1             ///D9
+#define ShiftCLK    PB0             ///D8
 #define ShiftReg    PORTB
-#define LatchCLK    PB0             ///D8
+#define LatchCLK    PB1             ///D9
 #define LatchReg    PORTB
-#define disp1       PB5             ///D13
-#define disp2       PC0             ///A0
-#define disp3       PC1             ///A1
-#define disp4       PC2             ///A2
+#define disp0       PB5             ///D13
+#define disp1       PC0             ///A0
+#define disp2       PC1             ///A1
+#define disp3       PC2             ///A2
 
 
-void setup() {
-
-
-    // Init outputs
-    SetBit(DDRB, DataIn);
-    SetBit(DDRB, ShiftCLK);
-    SetBit(DDRB, LatchCLK);
-    SetBit(DDRB, disp1);
-    SetBit(DDRC, disp2);
-    SetBit(DDRC, disp3);
-    SetBit(DDRC, disp4);
-
-    // start values
-    ClearBit(ShiftReg, ShiftCLK);
-    ClearBit(LatchReg, LatchCLK);
-    ClearBit(PORTB, disp1);
-    ClearBit(PORTC, disp2);
-    ClearBit(PORTC, disp3);
-    ClearBit(PORTC, disp4);
-}
 
 
 void send_data(unsigned char data)
@@ -68,38 +48,38 @@ void send_enable(int Displaynr)
     switch (Displaynr)
     {
         case 3:
-            ClearBit(PORTC, disp4);
-            SetBit(PORTB, disp1);
+            ClearBit(PORTC, disp3);
+            SetBit(PORTB, disp0);
+            SetBit(PORTC, disp1);
             SetBit(PORTC, disp2);
-            SetBit(PORTC, disp3);
         break;
 
         case 2:
-            ClearBit(PORTC, disp3);
-            SetBit(PORTB, disp1);
-            SetBit(PORTC, disp2);
-            SetBit(PORTC, disp4);
+            ClearBit(PORTC, disp2);
+            SetBit(PORTB, disp0);
+            SetBit(PORTC, disp1);
+            SetBit(PORTC, disp3);
         break;
 
         case 1:
-            ClearBit(PORTC, disp2);
-            SetBit(PORTB, disp1);
-            SetBit(PORTC, disp4);
+            ClearBit(PORTC, disp1);
+            SetBit(PORTB, disp0);
             SetBit(PORTC, disp3);
+            SetBit(PORTC, disp2);
         break;
 
         case 0:
-            ClearBit(PORTB, disp1);
-            SetBit(PORTC, disp4);
-            SetBit(PORTC, disp2);
+            ClearBit(PORTB, disp0);
             SetBit(PORTC, disp3);
+            SetBit(PORTC, disp1);
+            SetBit(PORTC, disp2);
         break;
 
         default:
-            ClearBit(PORTB, disp1);
+            ClearBit(PORTB, disp0);
+            ClearBit(PORTC, disp1);
             ClearBit(PORTC, disp2);
             ClearBit(PORTC, disp3);
-            ClearBit(PORTC, disp4);
         break;;
     }
 }
@@ -108,7 +88,7 @@ void display(int data, int disp)
 {
 
     ///array voor weergave getal tussen 0-9 op 7-segdisp. met als waarde 10 een leeg display
-    unsigned char DECdisplay[11] = {0x03,0x9F,0x25,0x0D,0x99,0x49,0x41,0x1F,0x01,0x09,0xFF};
+    unsigned char DECdisplay[11] = {0xFC,0x60,0xDA,0xF2,0x66,0xB6,0xBF,0xE0,0xFF,0xF6,0x00};
     send_data(DECdisplay[data]);
     send_enable(disp);
 
@@ -120,14 +100,37 @@ void display(int data, int disp)
 }
 void DECdisplay_getal(uint16_t getal)
 {
-    for(int i=0; getal!=0; i++)
+    for(int i=3; getal!=0; i--)
     {
         display(getal%10, i);
         getal = getal / 10;
     }
 
 }
+void setup() {
+
+
+    // Init outputs
+    SetBit(DDRB, DataIn);
+    SetBit(DDRB, ShiftCLK);
+    SetBit(DDRB, LatchCLK);
+    SetBit(DDRB, disp0);
+    SetBit(DDRC, disp1);
+    SetBit(DDRC, disp2);
+    SetBit(DDRC, disp3);
+
+    // start values
+    ClearBit(ShiftReg, ShiftCLK);
+    ClearBit(LatchReg, LatchCLK);
+    ClearBit(PORTB, disp0);
+    ClearBit(PORTC, disp1);
+    ClearBit(PORTC, disp2);
+    ClearBit(PORTC, disp3);
+
+    // display(2,0);
+}
 
 void loop() {
-    DECdisplay_getal(1234);
+    // display(0,0);
+    DECdisplay_getal(9678);
 }
