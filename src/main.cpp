@@ -20,26 +20,30 @@ enum direction {cw,ccw};
 
 volatile uint16_t DisplayValue = 124;
 volatile direction Dir = cw;
-volatile bool dirFlag = false;
+volatile bool dirFlag0 = false;
+volatile bool dirFlag1 = false;
 
 ISR(INT0_vect) {
-    if (dirFlag) {
+    if (dirFlag0) {
         DisplayValue++;
-        dirFlag = false;
+        dirFlag0 = false;
 
     }
     else {
-        dirFlag = true;
+        dirFlag1 = true;
+
     }
 }
 
 ISR(INT1_vect) {
-    if (dirFlag) {
+    if (dirFlag1) {
         DisplayValue--;
-        dirFlag = false;
+        dirFlag1 = false;
+
     }
     else {
-        dirFlag = true;
+        dirFlag0 = true;
+
     }
 }
 
@@ -172,5 +176,6 @@ void setup() {
 
 void loop() {
 
-     DECdisplay_getal(DisplayValue);
+    DECdisplay_getal(DisplayValue);
+
 }
