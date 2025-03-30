@@ -17,7 +17,13 @@
 #define disp3       PC2             ///A2
 
 
+void Init_ADC(void)
+{
+    SetBit(ADMUX, REFS0);    //referentie voltage VCC
+    ADCSRA |= BV(ADPS2) | BV(ADPS1); //prescale van 64 dus frequentie van 187Hz
+    SetBit(ADCSRA, ADEN);
 
+}
 
 void send_data(unsigned char data)
 {
@@ -109,7 +115,8 @@ void DECdisplay_getal(uint16_t getal)
 }
 void setup() {
 
-
+    Init_ADC();
+    
     // Init outputs
     SetBit(DDRB, DataIn);
     SetBit(DDRB, ShiftCLK);
