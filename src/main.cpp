@@ -9,7 +9,7 @@
 #define DataReg     PORTB
 #define ShiftCLK    PB0             ///D8
 #define ShiftReg    PORTB
-#define LatchCLK    PB1             ///D9
+#define LatchCLK    PB3             ///D11
 #define LatchReg    PORTB
 #define disp0       PB5             ///D13
 #define disp1       PC0             ///A0
@@ -19,9 +19,10 @@
 
 void Init_ADC(void)
 {
-    SetBit(ADMUX, REFS0);    //referentie voltage VCC
+    SetBit(ADMUX, REFS0);       //referentie voltage VCC
+    SetBit(ADMUX, ADLAR);       //Left adjust ADC register
     ADCSRA |= BV(ADPS2) | BV(ADPS1); //prescale van 64 dus frequentie van 187Hz
-    SetBit(ADCSRA, ADEN);
+    SetBit(ADCSRA, ADEN);           //enable ADC
 
 }
 
@@ -138,6 +139,20 @@ void setup() {
 }
 
 void loop() {
+    uint8_t ADCVal[3];
 
-     DECdisplay_getal(5634);
+    for(int channel=0; channel<3; channel++) {
+        ADMUX = (0xf0 & ADMUX) | (channel+5);
+        SetBit(ADCSRA, ADSC);
+        loop_until_bit_is_clear(ADCSRA, ADSC);
+        ADCVal[channel]= ADCH;
+    }
+
+     DECdisplay_getal(ADCVal[0]);
+    _delay_ms(500);
+    DECdisplay_getal(ADCVal[1]);
+    _delay_ms(500);
+    DECdisplay_getal(ADCVal[2]);
+    _delay_ms(500);
+
 }
