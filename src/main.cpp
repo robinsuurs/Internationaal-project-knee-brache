@@ -9,7 +9,7 @@
 #define DataReg     PORTB
 #define ShiftCLK    PB0             ///D8
 #define ShiftReg    PORTB
-#define LatchCLK    PB1             ///D9
+#define LatchCLK    PB3             ///D11
 #define LatchReg    PORTB
 #define disp0       PB5             ///D13
 #define disp1       PC0             ///A0
