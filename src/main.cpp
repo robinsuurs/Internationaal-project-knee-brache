@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <TM1637.h>
 
 #define BV(bit)                 (1 << (bit))
 #define SetBit(byte, bit)       (byte |= BV(bit))
@@ -17,6 +18,7 @@
 #define disp3       PC2             ///A2
 
 enum direction {cw,ccw};
+TM1637 tm(LatchCLK, DataIn);
 
 volatile uint16_t DisplayValue = 124;
 volatile direction Dir = cw;
@@ -62,120 +64,20 @@ void InitInterrupt() {
     sei();
 }
 
-void send_data(unsigned char data)
-{
-    // Herhaal voor alle bits in een char
-    for(int i=0; i<8; i++)
-    {
-        // Bepaal de waarde van de bit die je naar het schuifregister
-        // wil sturen
-        if (bit_is_set(data, i))
-        {
-            SetBit(DataReg, DataIn);
-        }
-        else
-        {
-            ClearBit(DataReg, DataIn);
-        }
-
-
-        ToggleBit(ShiftReg, ShiftCLK);
-        ToggleBit(ShiftReg, ShiftCLK);
-
-
-    }
-}
-
-void send_enable(int Displaynr)
-{
-    switch (Displaynr)
-    {
-        case 3:
-            ClearBit(PORTC, disp3);
-            SetBit(PORTB, disp0);
-            SetBit(PORTC, disp1);
-            SetBit(PORTC, disp2);
-        break;
-
-        case 2:
-            ClearBit(PORTC, disp2);
-            SetBit(PORTB, disp0);
-            SetBit(PORTC, disp1);
-            SetBit(PORTC, disp3);
-        break;
-
-        case 1:
-            ClearBit(PORTC, disp1);
-            SetBit(PORTB, disp0);
-            SetBit(PORTC, disp3);
-            SetBit(PORTC, disp2);
-        break;
-
-        case 0:
-            ClearBit(PORTB, disp0);
-            SetBit(PORTC, disp3);
-            SetBit(PORTC, disp1);
-            SetBit(PORTC, disp2);
-        break;
-
-        default:
-            ClearBit(PORTB, disp0);
-            ClearBit(PORTC, disp1);
-            ClearBit(PORTC, disp2);
-            ClearBit(PORTC, disp3);
-        break;;
-    }
-}
-
-void display(int data, int disp)
-{
-
-    ///array voor weergave getal tussen 0-9 op 7-segdisp. met als waarde 10 een leeg display
-    unsigned char DECdisplay[11] = {0xFC,0x60,0xDA,0xF2,0x66,0xB6,0xBF,0xE0,0xFF,0xF6,0x00};
-    send_data(DECdisplay[data]);
-    send_enable(disp);
-
-
-    // Toggle latchclk (geen delay nodig want: minimale puls van 13ns nodig, MAX CPU snelhied is 16Mhz dus 83ns puls AKA ruim binnen spec)
-    ToggleBit(LatchReg, LatchCLK);
-    ToggleBit(LatchReg, LatchCLK);
-
-}
-void DECdisplay_getal(uint16_t getal)
-{
-    for(int i=3; getal!=0; i--)
-    {
-        display(getal%10, i);
-        getal = getal / 10;
-    }
-
-}
 void setup() {
 
     InitInterrupt();
+    tm.begin(); //set display pinnen als output
 
     // Init outputs
-    SetBit(DDRB, DataIn);
-    SetBit(DDRB, ShiftCLK);
-    SetBit(DDRB, LatchCLK);
-    SetBit(DDRB, disp0);
-    SetBit(DDRC, disp1);
-    SetBit(DDRC, disp2);
-    SetBit(DDRC, disp3);
 
     // start values
-    ClearBit(ShiftReg, ShiftCLK);
-    ClearBit(LatchReg, LatchCLK);
-    ClearBit(PORTB, disp0);
-    ClearBit(PORTC, disp1);
-    ClearBit(PORTC, disp2);
-    ClearBit(PORTC, disp3);
 
 
 }
 
 void loop() {
 
-    DECdisplay_getal(DisplayValue);
+    tm.display(1234);
 
 }
