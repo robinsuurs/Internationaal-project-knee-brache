@@ -21,7 +21,7 @@ enum direction {cw,ccw};
 TM1637 tm(LatchCLK, DataIn);
 volatile uint16_t DisplayValue = 124;
 
-void Init_ADC(void)
+void Init_ADC()
 {
     SetBit(ADMUX, REFS0);       //referentie voltage VCC
     SetBit(ADMUX, ADLAR);       //Left adjust ADC register
@@ -54,11 +54,11 @@ void loop() {
         ADCVal[channel]= ADCH;
     }
 
-     DECdisplay_getal(ADCVal[0]);
-    _delay_ms(500);
-    DECdisplay_getal(ADCVal[1]);
-    _delay_ms(500);
-    DECdisplay_getal(ADCVal[2]);
-    _delay_ms(500);
+     tm.display(ADCVal[0]);
+    delay(500);
+    tm.display(ADCVal[1]);
+    delay(500);
+    tm.display(ADCVal[2]);
+    delay(500);
 
 }
